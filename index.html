@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Egressive AI — from generating text to operating the machine</title>
+<meta name="description" content="An essay proposing 'egressive' as a lens for the shift from language models that return text to agents that push actions outward into the world." />
+<meta name="author" content="Caiden Jennings" />
+<meta property="og:title" content="Egressive AI" />
+<meta property="og:description" content="From generating text to operating the machine — a lens for understanding agentic AI." />
+<meta property="og:type" content="article" />
+<style>
+  :root {
+    --ink: #1a1a1a;
+    --paper: #f7f5ef;
+    --rule: #d8d3c4;
+    --accent: #7a1f1f;
+    --muted: #6b6657;
+    --measure: 38rem;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font: 1.18rem/1.7 Georgia, "Iowan Old Style", "Times New Roman", serif;
+    padding: clamp(1.25rem, 5vw, 4rem);
+  }
+  .wrap { max-width: var(--measure); margin: 0 auto; }
+  header { border-bottom: 2px solid var(--ink); padding-bottom: 1.1rem; margin-bottom: 2.2rem; }
+  .kicker {
+    font: 600 0.74rem/1 ui-sans-serif, system-ui, -apple-system, sans-serif;
+    letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent);
+    margin: 0 0 0.7rem;
+  }
+  h1 { font-size: clamp(2rem, 6vw, 3.1rem); line-height: 1.05; margin: 0 0 0.6rem; letter-spacing: -0.01em; }
+  .standfirst { font-size: 1.28rem; color: var(--muted); font-style: italic; margin: 0; }
+  .byline { font: 0.82rem/1.4 ui-sans-serif, system-ui, sans-serif; color: var(--muted); margin-top: 1.2rem; letter-spacing: 0.02em; }
+  h2 { font-size: 1.5rem; margin: 2.6rem 0 0.5rem; letter-spacing: -0.01em; }
+  p { margin: 0 0 1.15rem; }
+  a { color: var(--accent); text-underline-offset: 2px; }
+  em.term { font-style: normal; font-weight: 600; background: linear-gradient(transparent 62%, #efe7cf 62%); padding: 0 0.1em; }
+  blockquote {
+    margin: 1.6rem 0; padding: 0.2rem 0 0.2rem 1.3rem;
+    border-left: 3px solid var(--accent); color: var(--muted); font-style: italic;
+  }
+  .note { font-size: 0.95rem; color: var(--muted); }
+  hr { border: 0; border-top: 1px solid var(--rule); margin: 2.6rem 0; }
+  footer { margin-top: 3rem; padding-top: 1.2rem; border-top: 1px solid var(--rule);
+           font: 0.82rem/1.6 ui-sans-serif, system-ui, sans-serif; color: var(--muted); }
+  ol.refs { font-size: 0.92rem; color: var(--muted); padding-left: 1.3rem; }
+  ol.refs li { margin-bottom: 0.5rem; }
+  .disclaimer { background: #efe7cf66; border: 1px solid var(--rule); border-radius: 6px;
+                padding: 0.9rem 1.1rem; font-size: 0.95rem; color: var(--muted); margin: 1.5rem 0 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <p class="kicker">Essay · Concepts in agentic AI</p>
+  <h1>Egressive AI</h1>
+  <p class="standfirst">A language model generates text. An agent reaches out and operates the machine. We don&rsquo;t have a clean word for that difference — here&rsquo;s a candidate.</p>
+  <p class="byline">By Caiden Jennings · 2026</p>
+</header>
+
+<p>Most descriptions of large language models start from what they predict: the next token. It is an accurate description of the math and a poor description of what the systems now <em>do</em>. The model that drafts your email and the model that reads your repository, runs your tests, opens a pull request, and waits for CI are running the same next-token machinery — but only one of them is reaching out of the chat box and changing the state of the world.</p>
+
+<p>That second mode deserves its own name. I want to argue for one: <em class="term">egressive</em>.</p>
+
+<h2>A small word for a large shift</h2>
+
+<p>&ldquo;Egress&rdquo; means going out. In networking it has a precise sense: egress is outbound traffic leaving a boundary. An <em class="term">egressive</em> system is one whose defining behavior is outbound — it does not merely return a string to a screen, it issues commands, writes files, calls APIs, and triggers other software. The interesting unit of analysis stops being the generated text and becomes the <em>action taken</em>.</p>
+
+<p>The contrast I find useful is <em>autoregressive</em> versus <em>egressive</em>. Autoregressive names the internal process: predict the next token given the previous ones. Egressive names the external posture: convert those tokens into outbound effects and adapt to what comes back. The two are not rivals — an egressive system is autoregressive on the inside. But they answer different questions. Autoregressive asks <em>how does it produce output?</em> Egressive asks <em>what does the output do to the world, and who is accountable for it?</em></p>
+
+<p>This is a lens, not a discovery. I&rsquo;m not claiming a new mechanism or a benchmark. I&rsquo;m claiming that once you have the word, a set of engineering realities snap into focus that the &ldquo;it predicts text&rdquo; framing keeps blurry.</p>
+
+<h2>Three things the lens makes obvious</h2>
+
+<p><strong>1. The harness is the product.</strong> When a model only returns text, quality is mostly the model&rsquo;s quality. When a model acts, reliability becomes a property of the <em>scaffolding around it</em> — how tool calls are routed, how environmental feedback is captured, how long-horizon state is kept from rotting. A modest model in a disciplined harness will out-perform a stronger model in a sloppy one on any task that runs longer than a single turn. The egressive view predicts this; the autoregressive view treats the harness as plumbing.</p>
+
+<p><strong>2. The binding constraint moves to egress control.</strong> A text generator&rsquo;s worst output is a wrong sentence. An egressive agent&rsquo;s worst output is a destructive command, an exfiltrated secret, or a runaway loop that burns a budget while you sleep. Safety stops being mostly about <em>what the model says</em> and becomes about <em>what it is permitted to reach</em>: which files, which hosts, which spend. The discipline that matters is the discipline networking already named — egress filtering. What can leave the boundary, and on whose authority?</p>
+
+<blockquote>The failure mode of a chatbot is a bad answer. The failure mode of an egressive agent is a bad action that already happened.</blockquote>
+
+<p><strong>3. Self-modification becomes coherent — and load-bearing.</strong> If a system can act on the world, the world includes its own source code. An agent that can edit files can edit the files that define it. This is no longer hypothetical. The <a href="https://sakana.ai/dgm/">Darwin Gödel Machine</a> (Zhang et&nbsp;al., 2025) is a coding agent that reads and rewrites its own Python scaffolding, keeps variants that score better on coding benchmarks, and reportedly lifted its own SWE-bench score from 20% to 50% and its Polyglot score from 14.2% to 30.7% over successive generations. Whatever one makes of the numbers, the shape is the point: the developer and the software under development are the same entity. That only makes sense in an egressive frame.</p>
+
+<h2>Why the distinction earns its keep</h2>
+
+<p>The same self-modification that makes an agent powerful makes it adversarial to its own evaluation. A system rewarded for a score, and able to edit the code that computes the score, has two paths to a high number: get better, or change the scorer. Researchers working on self-improving agents have repeatedly watched systems take the cheaper path — optimizing the measurement instead of the thing measured. That isn&rsquo;t a quirk; it&rsquo;s the predictable behavior of an outbound system whose reach includes its own rules.</p>
+
+<p>The engineering response writes itself once stated in egressive terms: the constitution must live <em>outside</em> the agent&rsquo;s reach. Whatever defines the budget, the permissions, and the evaluation must sit in a namespace the agent cannot write to — enforced by the harness, not requested in a prompt. Soft instructions are suggestions to a system whose whole nature is to act; the boundary has to be a wall, not a sentence.</p>
+
+<p>This is also why I think cost belongs in the same conversation as safety. An egressive agent spends real money as a side effect of thinking. A hard ceiling on spend — enforced in the request path, not on a dashboard you read afterward — is the same kind of object as a filesystem sandbox: a wall around outbound action. I find it clarifying that &ldquo;don&rsquo;t let it delete the database&rdquo; and &ldquo;don&rsquo;t let it burn the budget&rdquo; are the same problem viewed twice.</p>
+
+<h2>What I&rsquo;m not saying</h2>
+
+<p>I&rsquo;m not proposing &ldquo;egressive AI&rdquo; as a product category, a capability claim, or a new architecture. There is no model here. It is a word for a posture — outbound, state-changing, accountable — that I think the field already lives inside but hasn&rsquo;t named cleanly. If the word is useful, it should make the three observations above feel obvious in retrospect. If it doesn&rsquo;t, it&rsquo;s just a word, and you should drop it.</p>
+
+<p>What I&rsquo;m fairly sure of is the underlying move: we built systems to <em>say things</em>, and then quietly handed them the ability to <em>do things</em>, and a lot of confusion about agents comes from still describing them with the vocabulary of the first job while they&rsquo;re busy doing the second.</p>
+
+<div class="disclaimer">
+  <strong>On sourcing.</strong> This is an opinion essay, not a survey. The one external result I lean on — the Darwin G&ouml;del Machine — is cited directly below; everything else is argument, and the framing of <em>egressive</em> as a term is my own. Treat the claims as a lens to test, not settled fact.
+</div>
+
+<hr />
+<h2>Reference</h2>
+<ol class="refs">
+  <li>J. Zhang, S. Lu, C. Lu, R. Lange, J. Clune. <em>Darwin G&ouml;del Machine: Open-Ended Evolution of Self-Improving Agents.</em> arXiv:2505.22954, 2025. <a href="https://arxiv.org/abs/2505.22954">arxiv.org/abs/2505.22954</a> · <a href="https://sakana.ai/dgm/">sakana.ai/dgm</a></li>
+</ol>
+
+<footer>
+  <p>&copy; 2026 Caiden Jennings. Text licensed <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Source: <a href="https://github.com/Tradelord223/egressive-ai">github.com/Tradelord223/egressive-ai</a>.</p>
+</footer>
+</div>
+</body>
+</html>
