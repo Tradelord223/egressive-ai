@@ -15,7 +15,7 @@
 <style>
   :root {
     --ink:#0b0d10; --ink2:#101418; --bone:#ece7dd; --muted:#9a958b;
-    --rust:#d9542b; --line:#252a31; --measure:42rem; --wide:74rem;
+    --rust:#d9542b; --line:#252a31; --measure:42rem; --wide:46rem;
     --serif:"Georgia","Iowan Old Style",serif;
     --display:"Fraunces",Georgia,serif;
     --mono:"JetBrains Mono",ui-monospace,monospace;
@@ -49,21 +49,24 @@
                 line-height:1.35; max-width:36rem; margin-top:1.6rem; color:var(--bone); }
   .byline { font-family:var(--mono); font-size:.76rem; color:var(--muted); margin-top:1.8rem; display:flex; gap:1.2rem; flex-wrap:wrap; }
 
-  /* layout with sticky TOC */
-  .layout { display:grid; grid-template-columns:1fr; gap:0; }
-  @media (min-width:1000px){
-    .layout { grid-template-columns:16rem minmax(0,var(--measure)) 1fr; gap:2rem; max-width:var(--wide); margin:0 auto; padding:0 1.5rem; }
-    .toc { display:block; }
-  }
+  /* layout: a single centered measure column. The TOC floats as a fixed
+     left rail (out of flow) on wide screens, so it never pushes the article
+     off-center. */
+  .layout { padding:0 1.5rem; }
+  /* Center the article as a block (per-child margin:auto loses to the later
+     `p{margin:…}` rule, so we center the column itself). */
+  article { padding:3rem 0 2rem; max-width:var(--measure); margin:0 auto; }
+  article > * { max-width:100%; }
+
   .toc { display:none; }
-  .toc .stick { position:sticky; top:5rem; padding-top:3rem; font-family:var(--mono); font-size:.78rem; line-height:2; }
+  .toc .stick { font-family:var(--mono); font-size:.78rem; line-height:2; }
   .toc a { display:block; color:var(--muted); text-decoration:none; padding:.05rem 0; border-left:2px solid transparent; padding-left:.7rem; }
   .toc a:hover, .toc a.active { color:var(--bone); border-left-color:var(--rust); }
   .toc .tlabel { color:var(--rust); letter-spacing:.16em; text-transform:uppercase; font-size:.68rem; margin-bottom:.6rem; }
-
-  article { padding:3rem 0 2rem; }
-  .layout article { padding-top:3rem; }
-  article > * { max-width:var(--measure); }
+  @media (min-width:1280px){
+    .toc { display:block; position:fixed; top:5.5rem; width:13rem; z-index:30;
+           left:max(1.5rem, calc(50vw - 37rem)); }
+  }
   h2 { font-family:var(--display); font-weight:600; font-size:1.8rem; letter-spacing:-.01em; margin:3.2rem 0 .4rem; scroll-margin-top:5rem; }
   h3 { font-family:var(--display); font-weight:600; font-size:1.25rem; margin:2rem 0 .4rem; color:var(--bone); }
   .secno { font-family:var(--mono); font-size:.72rem; color:var(--rust); letter-spacing:.18em; display:block; margin-bottom:.3rem; }
@@ -94,7 +97,7 @@
   .disclaimer strong { color:var(--bone); }
 
   .practice { border-top:1px solid var(--line); margin-top:3rem; padding:3rem 0; }
-  .cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:1rem; max-width:var(--measure); }
+  .cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:1rem; }
   .pcard { border:1px solid var(--line); border-radius:10px; padding:1.2rem; background:var(--ink2); }
   .pcard h4 { font-family:var(--mono); font-size:.88rem; margin-bottom:.4rem; }
   .pcard p { font-size:.88rem; color:var(--muted); margin:0; }
